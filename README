@@ -1,0 +1,6 @@
+xselec은 XML DOM의 특정 노드들을 CSS 비슷한 구문을 이용해서 간편하게 선택하고
+접근하기 위한 루아 라이브러리입니다.
+
+좀 더 자세한 사용법 문서는 차차 준비할 계획입니다. luahml 프로젝트의
+luahml.lua(https://github.com/ryugwang/luahml/blob/master/luahml.lua)에서
+활용 예를 볼 수 있습니다.
