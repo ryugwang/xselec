@@ -16,7 +16,7 @@ local function output_tree(node, puts, visited)
 		--puts(escape_xml_specials(node))
 		puts(node)
 	elseif type(node) == 'table' and not node.removed and node.tag then
-		if visited[node] then return end -- ¹«ÇÑ ·çÇÁ ¹æÁö
+		if visited[node] then return end -- ë¬´í•œ ë£¨í”„ ë°©ì§€
 		visited[node]=true
 		puts('<'..node.tag)
 		if (node.attr) then
@@ -40,7 +40,7 @@ local function output_tree(node, puts, visited)
 	end
 end
 
-local mt = {} -- ¸Þ¼­µåµéÀ» ´ãÀº ¸ÞÅ¸Å×ÀÌºí. ±¸Ã¼ÀûÀÎ Á¤ÀÇ´Â ¾Æ·¡¿¡¼­.
+local mt = {} -- ë©”ì„œë“œë“¤ì„ ë‹´ì€ ë©”íƒ€í…Œì´ë¸”. êµ¬ì²´ì ì¸ ì •ì˜ëŠ” ì•„ëž˜ì—ì„œ.
 
 local function make_selectable(t)
 	setmetatable(t, mt)
