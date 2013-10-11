@@ -246,7 +246,7 @@ mt.__call = function(self, selector)
 			end
 		end
 
-	   	local i, j, p, m = str:find('([.#%[]?)([%a%d%-_:]+)')
+	   	local i, j, p, m = str:find('([.#%[]?)([%a%d-_]+)')
 	   	if i then
 	   		return (conn or ''), (p or ''), m, str:sub(j+1)
 	   	end
@@ -298,12 +298,10 @@ mt.__call = function(self, selector)
 	end
 
 	local accum = {}
-
 	selector = selector:gsub('^ +', '')
 	is_first = true
 	while selector do
 		conn, prefix, key, selector = parse_selector(selector)
-
 		if conn == '>' then
 			target = result
 			norecurse = true
@@ -312,6 +310,7 @@ mt.__call = function(self, selector)
 			for i, v in ipairs(result) do table.insert(accum, v) end
 			target = self
 			search_func = search_node
+			norecurse = false
 		elseif conn == ' ' then
 			target = result
 			search_func = search_children
@@ -334,9 +333,7 @@ mt.__call = function(self, selector)
 				pred, selector = get_attr_pred(key, selector)
 			end
 		end
-
 		result = search_func(target, pred, norecurse)
-		--print(m, #result, target[1].tag)
 		is_first = false
 	end
 
