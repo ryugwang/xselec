@@ -101,6 +101,9 @@ mt.Attr = function(self, name, value)
 	local elem = get_target(self)
 	
 	if value then
+		if elem.attr[name] == nil then
+			table.insert(elem.attr, name)
+		end
 		elem.attr[name] = value
 		return value
 	end
@@ -132,13 +135,7 @@ end
 
 mt.Class = function(self, value)
 	local elem = get_target(self)
-	
-	if value then
-		elem.attr['class'] = value
-		return value
-	end
-
-	return elem.attr['class']
+	return self:Attr('class', value)
 end
 
 mt.each = function(self, f)
@@ -246,7 +243,7 @@ mt.__call = function(self, selector)
 			end
 		end
 
-	   	local i, j, p, m = str:find('([.#%[]?)([%a%d-_]+)')
+	   	local i, j, p, m = str:find('([.#%[]?)([%a%d-_%:]+)')
 	   	if i then
 	   		return (conn or ''), (p or ''), m, str:sub(j+1)
 	   	end
@@ -362,6 +359,20 @@ mt.toxml = function(self, puts)
 	
 	output_tree(self, puts)
 	return table.concat(lines)
+end
+
+mt.set_parents = function(self)
+	local function set_parents(elem)
+		for i, node in ipairs(elem) do
+			if node.tag then
+				node.parent = elem
+				node.nth = i
+				set_parents(node)
+			end
+		end
+	end
+	
+	set_parents(self)
 end
 
 local function get_preamble(str)
