@@ -43,8 +43,10 @@ end
 local mt = {} -- 메서드들을 담은 메타테이블. 구체적인 정의는 아래에서.
 
 local function make_selectable(t)
-	setmetatable(t, mt)
-	return t
+  if type(t) == 'table' then
+  	setmetatable(t, mt)
+  	return t
+  end
 end
 
 local function get_target(t)
@@ -274,7 +276,7 @@ mt.__call = function(self, selector)
 			elseif op == '~' then
 				pred = pred_attr_included(key, val)
 			else
-				pattern = val:gsub('[%^$%(%)%%.%[%]*+-?]', '%%%1')
+				pattern = val:gsub('[%^$%(%)%%%.%[%]%*%+%-%?]', '%%%1')
 				-- see http://api.jquery.com/category/selectors/
 				if op == '^' then
 					pattern = '^' .. pattern
@@ -309,6 +311,7 @@ mt.__call = function(self, selector)
 			search_func = search_node
 			norecurse = false
 		elseif conn == ' ' then
+			norecurse = false
 			target = result
 			search_func = search_children
 		end
@@ -399,9 +402,17 @@ local function load_from_string(str)
 end
 
 local function load_from_file(filename)
-	local f, err = io.open(filename,'rb')
+	local f, err
+	if filename == '--stdin' then
+		f = io.stdin
+	else
+		f, err = io.open(filename)
+	end
+
 	if f then
-		return load_from_string(f:read'*a')
+		local doc, err = load_from_string(f:read'*a')
+		f:close()
+		return doc, err
 	else
 		return nil, err
 	end
@@ -410,11 +421,14 @@ end
 local function regex_pattern(s)
 	return {pattern=s}
 end
-
+local function make_node(xmlstr)
+	return lom.parse(xmlstr)
+end
 -- interface --
 return {
 	load_from_string = load_from_string
 	, load_from_file = load_from_file
 	, make_selectable = make_selectable
 	, regex_pattern = regex_pattern
+	, make_node = make_node
 }
