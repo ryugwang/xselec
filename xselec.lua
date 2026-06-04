@@ -215,13 +215,13 @@ local pred_attr_included = function(name, value)
 end
 
 mt.by_attr = function(self, name, value)
-	local result= search_node(self, pred_attr_exact(name, vaule))
+	local result= search_node(self, pred_attr_exact(name, value))
 	result.query_result = true
 	return make_selectable(result)
 end
 
 mt.with_attr = function(self, name, value)
-	local result= search_node(self, pred_attr_exact(name, vaule), true)
+	local result= search_node(self, pred_attr_exact(name, value), true)
 	result.query_result = true
 	return make_selectable(result)
 end
@@ -276,7 +276,7 @@ mt.__call = function(self, selector)
 			elseif op == '~' then
 				pred = pred_attr_included(key, val)
 			else
-				pattern = val:gsub('[%^$%(%)%%%.%[%]%*%+%-%?]', '%%%1')
+				local pattern = val:gsub('[%^$%(%)%%%.%[%]%*%+%-%?]', '%%%1')
 				-- see http://api.jquery.com/category/selectors/
 				if op == '^' then
 					pattern = '^' .. pattern
@@ -298,7 +298,7 @@ mt.__call = function(self, selector)
 
 	local accum = {}
 	selector = selector:gsub('^ +', '')
-	is_first = true
+	local is_first = true
 	while selector do
 		conn, prefix, key, selector = parse_selector(selector)
 		if conn == '>' then
@@ -316,6 +316,7 @@ mt.__call = function(self, selector)
 			search_func = search_children
 		end
 
+		local pred
 		if prefix == '' then
 			pred = pred_tag(key)
 		else
