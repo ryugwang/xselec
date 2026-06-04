@@ -80,15 +80,15 @@ mt.text = function(self, val)
 	local function get_text(t)
 		if t.tag and visited[t] then return '' end
 		visited[t] = true
-		local result = ''
+		local result = {}
 		for i, v in ipairs(t) do
 			if type(v) == 'string' then
-				result = result .. v
+				table.insert(result, v)
 			elseif type(v) == 'table' then
-				result = result .. get_text(v)
+				table.insert(result, get_text(v))
 			end
 		end
-		return result
+		return table.concat(result)
 	end
 	local target = get_target(self)
 	if val then
